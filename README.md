@@ -94,6 +94,8 @@ SSH into the control node and follow the steps below:
 - 10.0.0.9 ansible_python_interpreter=/usr/bin/python3
 - 10.0.0.10 ansible_python_interpreter=/usr/bin/python3
 - 10.0.0.11 ansible_python_interpreter=/usr/bin/python3
+- Then add an elk section, using this info
+- 10.1.0.4 ansible_python_interpreter=/usr/bin/python3
 - Run the playbook, and ssh to Web servers and ELK server to check that the installation worked as expected. Alternately, you can also check the status by opening URL to ELK server, and opening HTTP port 80 to load balancer IP address. If the DVWA web page opens, then shut down individual VMs and verify they are all working.
 
 Their are several ansible playbooks. They are located in /etc/ansible/roles
