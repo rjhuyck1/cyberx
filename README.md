@@ -23,7 +23,7 @@ The main purpose of this network is to expose a load-balanced and monitored inst
 
 Load balancing ensures that the application will be highly available, in addition to restricting access to the network.
 By restricting access to the load balancer front end with Network Security Group settings (limiting HTTP access from a specific IP address range to the Load Balancer) we are able to control access, while at the same time ensuring high availability in the event one of the web servers stops responding.
-By utiizing a Jump Box, we are able to limit access from a specific IP host to a single public IP. From this point, access to the internal webservers can be initiated, protected them from outside access. By using public key authentication from the source PC, we are able to eliminate the 
+By utiizing a Jump Box, we are able to limit access from a specific IP host to a single public IP. From this point, access to the internal webservers can be initiated only via SSH, and using public key authentication from the Jump Box container.
 
 Integrating an ELK server allows users to easily monitor the vulnerable VMs for changes to the docker and system metrics.
 - In our implementation of filebeat, we monitored system logs
