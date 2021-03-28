@@ -21,23 +21,24 @@ This document contains the following details:
 
 The main purpose of this network is to expose a load-balanced and monitored instance of DVWA, the D*mn Vulnerable Web Application.
 
-Load balancing ensures that the application will be highly _____, in addition to restricting _____ to the network.
-- _TODO: What aspect of security do load balancers protect? What is the advantage of a jump box?_
+Load balancing ensures that the application will be highly available, in addition to restricting access to the network.
+By restricting access to the load balancer front end with Network Security Group settings (limiting HTTP access from a specific IP address range to the Load Balancer) we are able to control access, while at the same time ensuring high availability in the event one of the web servers stops responding.
+By utiizing a Jump Box, we are able to limit access from a specific IP host to a single public IP. From this point, access to the internal webservers can be initiated, protected them from outside access. By using public key authentication from the source PC, we are able to eliminate the 
 
-Integrating an ELK server allows users to easily monitor the vulnerable VMs for changes to the _____ and system _____.
-- _TODO: What does Filebeat watch for?_
-- _TODO: What does Metricbeat record?_
+Integrating an ELK server allows users to easily monitor the vulnerable VMs for changes to the docker and system metrics.
+- In our implementation of filebeat, we monitored system logs
+- Metricbeat takes metrics and statistics from the monitored servers and ships them to output in Kibana
 
 The configuration details of each machine may be found below.
 _Note: Use the [Markdown Table Generator](http://www.tablesgenerator.com/markdown_tables) to add/remove values from the table_.
 
-| Name     | Function | IP Address | Operating System |
+| Name     | Function | IP Address | Operating System | Public IP (if applicable) |
 |----------|----------|------------|------------------|
-| Jump Box | Gateway  | 10.0.0.7   | Linux            |
+| Jump Box | Gateway  | 10.0.0.7   | Linux            | 13.91.224.32 |
 | Web-1    | DVWA     | 10.0.0.9   | Linux            |
 | Web-2    | DVWA     | 10.0.0.10  | Linux            |  
 | Web-3    | DVWA     | 10.0.0.11  | Linux            |    
-| ElkServer| ElkStack | 10.1.0.4   | Linux            |
+| ElkServer| ElkStack | 10.1.0.4   | Linux            |20.190.12.186 |
 ### Access Policies
 
 The machines on the internal network are not exposed to the public Internet. 
