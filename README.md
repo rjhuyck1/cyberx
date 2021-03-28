@@ -51,11 +51,11 @@ Machines within the network can only be accessed by Jump Box Ansible docker cont
 
 A summary of the access policies in place can be found in the table below.
 
-| Name      | Publicly Accessible | Allowed IP Addresses |
-|-----------|---------------------|----------------------|
-| Jump Box  | Yes                 | Only My HOme Public IP |
-| Elk Server| Only Kibana Web Portal|                      |
-|           |                     |                      |
+| Name          | Publicly Accessible   | Allowed IP Addresses        |
+|-----------    |-----------------------|-----------------------------|
+| Jump Box      | Yes                   | Only Student Home Public IP |
+| Elk Server    | Only on port 5601     | Only Student Home Public IP |
+| Load Balancer | Only on port 80       | Only Student Home Public IP |
 
 ### Elk Configuration
 
