@@ -89,13 +89,20 @@ These Beats allow us to collect the following information from each machine:
 In order to use the playbook, you will need to have an Ansible control node already configured. Assuming you have such a control node provisioned: 
 
 SSH into the control node and follow the steps below:
-- Copy the _____ file to _____.
-- Update the _____ file to include...
-- Run the playbook, and navigate to ____ to check that the installation worked as expected.
+- Copy the ansible.cfg file to /etc/ansible
+- Update the hosts file to include  webservers section with their IP addresses and python interpreter
+- 10.0.0.9 ansible_python_interpreter=/usr/bin/python3
+- 10.0.0.10 ansible_python_interpreter=/usr/bin/python3
+- 10.0.0.11 ansible_python_interpreter=/usr/bin/python3
+- Run the playbook, and ssh to Web servers and ELK server to check that the installation worked as expected. Alternately, you can also check the status by opening URL to ELK server, and opening HTTP port 80 to load balancer IP address. If the DVWA web page opens, then shut down individual VMs and verify they are all working.
 
-_TODO: Answer the following questions to fill in the blanks:_
-- _Which file is the playbook? Where do you copy it?_
-- _Which file do you update to make Ansible run the playbook on a specific machine? How do I specify which machine to install the ELK server on versus which to install Filebeat on?_
-- In order to check if the ELK server is running open the following URL: 20.190.12.186:5601/app/kibana#/home
+Their are several ansible playbooks. They are located in /etc/ansible/roles
+- filebeat-playbook.yml  
+- install-elk.yml  
+- metricbeat-playbook.yml  
+- pentest.yml
+
+In order to control which servers to run specific playbooks against, the /etc/ansible/hosts file 
+In order to check if the ELK server is running open the following URL: 20.190.12.186:5601/app/kibana#/home
 
 _As a **Bonus**, provide the specific commands the user will need to run to download the playbook, update the files, etc._
